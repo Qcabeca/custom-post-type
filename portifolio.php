@@ -1,4 +1,17 @@
-<?php // Criando tipo de Post - Portifólio
+<?php 
+
+/** 
+ * @package Quebrando a Cabeça
+ * @subpackage custom-post-type
+ * @Author Quebrando a Cabeça
+ * @Author URL http://quebrandoacabeca.com
+ * @Post URL http://quebrandoacabeca.com/criar-custom-post-type
+ */
+
+
+// PASSO 1
+
+// Criando tipo de Post - Portifólio
 add_action('init', 'portifolio_register');
 function portifolio_register() {
 $labels = array(
@@ -10,7 +23,7 @@ $labels = array(
 'new_item' => __('Nova Imagem'), // define o rótulo do novo item
 'view_item' => __('Ver Imagem'), // define o rótulo para visualizar item
 'search_items' => __('Buscar Imagem'), // define o rótulo para buscar item
-'not_found' =>  __('Sem resultado'), //define o no rótulo para quano não houver item
+'not_found' => __('Sem resultado'), //define o no rótulo para quano não houver item
 'not_found_in_trash' => __('sem resultados na lixeira'), //define o rótulo quando não houver item na lixeira
 'parent_item_colon' => ''
 );
@@ -18,7 +31,9 @@ $args = array(
 'labels' => $labels, // define os rótulos como variáveis
 'public' => true, // define se é o post é exibido no admin
 'publicly_queryable' => true, //define se o post é exibido no frontend
-'exclude_from_search' => false, // define se o post é buscável  
+		'show_ui' => true,
+		'query_var' => true,
+'exclude_from_search' => false, // define se o post é buscável
 'menu_icon' => get_stylesheet_directory_uri() . '/img/Icon/iconPortifolio.png', // define o icone no Menu
 'rewrite' => true, // define se o post deve ter a sua URL
 'capability_type' => 'post', //define se é post ou page
@@ -31,20 +46,22 @@ $args = array(
 register_post_type( 'portifolio' , $args );
 }
 
-// PASSO 3 - CRIANDO BOX PARA CAMPOS PERSONALIZADOS
+// PASSO 2 - CRIANDO BOX PARA CAMPOS PERSONALIZADOS
 
-function portifolio_meta_box(){
+add_action("admin_init", "admin_init_portifolio");
+
+function admin_init_portifolio(){
 add_meta_box(
-'box_portifolio', // define o nome do metabox
- __('Informações do Job'),  // define o título da Caixa de campos personalizados
- 'portifolio_campos', // define a função que sera chamada para exibir o conteúdo
- 'portifolio',  // define que tipo de post vai ter esses campos personalizados
- 'side', // define o local da página de edição que será exibido a caixa
+'portifolio_meta', // define o nome do metabox
+ __('Informações do Job'), // define o título da Caixa de campos personalizados
+ 'portifolio_meta', // define a função que sera chamada para exibir o conteúdo
+ 'portifolio', // define que tipo de post vai ter esses campos personalizados
+ 'normal', // define o local da página de edição que será exibido a caixa
  'high' // define a prioridade de onde vai aparecer a caixa - high, normal ou low
  );
 }
 
-function portifolio_campos() {
+function portifolio_meta() {
  
   global $post;
   $custom = get_post_custom($post->ID);
@@ -52,27 +69,25 @@ function portifolio_campos() {
   $ano = $custom["ano"][0]; // define o campo ano
   $servico = $custom["servico"][0]; // define o campo servico
   ?>
-   
-  <p><label>Cliente:</label><br />
-  <input type="text" name="cliente" id="cliente" value="<?php echo $cliente; ?>" />
-  </p>
-   
-  <p><label>Ano:</label><br />
-  <input type="text" name="ano" id="ano" value="<?php echo $ano; ?>" />
-  </p>
- 
- <p><label>Tipo de Serviço:</label><br />
-  <select name="servico">
-  <option <?php if($servico == "") echo ' selected = "selected" ' ?> checked value="">Escolha uma opção</option>
-  <option <?php if($servico == "Design") echo ' selected = "selected" ' ?> checked value="Design">Design</option>
-  <option <?php if($servico == "Desenvolvimento") echo ' selected = "selected" ' ?> value="Desenvolvimento">Desenvolvimento</option>
-  <option <?php if($servico == "SEO") echo ' selected = "selected" ' ?> value="SEO">SEO</option>
-  </select>
-  </p>
- <?php
+<p><label>Cliente:</label><br />
+<input type="text" name="cliente" id="cliente" value="<?php echo $cliente; ?>" />
+</p>
+<p><label>Ano:</label><br />
+<input type="text" name="ano" id="ano" value="<?php echo $ano; ?>" />
+</p>
+<p><label>Tipo de Serviço:</label><br />
+<select name="servico">
+<option <?php if($servico == "") echo ' selected = "selected" ' ?> checked value="">Escolha uma opção</option>
+<option <?php if($servico == "Design") echo ' selected = "selected" ' ?> checked value="Design">Design</option>
+<option <?php if($servico == "Desenvolvimento") echo ' selected = "selected" ' ?> value="Desenvolvimento">Desenvolvimento</option>
+<option <?php if($servico == "SEO") echo ' selected = "selected" ' ?> value="SEO">SEO</option>
+</select>
+</p>
+<?php
 }
 
-//PASSO 4 - CRIANDO CATEGORIAS
+
+//PASSO 3 - CRIANDO CATEGORIAS
 
 register_taxonomy(
 "categorias_portifolio", //nome da taxonomia
@@ -85,7 +100,7 @@ array(
 )
 );
 
-//PASSO 5 - CRIANDO TAGS
+//PASSO 4 - CRIANDO TAGS
 
 register_taxonomy
 (
@@ -96,19 +111,20 @@ array(
 'labels' => array(
 'name' => _x( 'Tags do Portifolio', 'tags_portifolio' ), // define o rótulo das Tags
 'singular_name' => _x( 'Tag do Portifolio', 'tags_portifolio' ), //define o rótulo da tag no singular
-'search_items' =>  __( 'Buscar Tags' ), // define o rótulo ao buscar tags
+'search_items' => __( 'Buscar Tags' ), // define o rótulo ao buscar tags
 'all_items' => __( 'Todas as Tags' ), // define o rótulo para todas as tags
-'edit_item' => __( 'Editar Tags' ),  // define o rótulo ao editar tags
+'edit_item' => __( 'Editar Tags' ), // define o rótulo ao editar tags
 'update_item' => __( 'Atualizar Tag' ), //define o rótulo para atualizar tags
 'add_new_item' => __( 'Adicionar nova Tag' ), // define o rótulo para adicionar nova tag
 'new_item_name' => __( 'Nova Tag' ), // define o rótulo da Nova Tag
-'menu_name' => __( 'Tags de Feiras' ), // define o rótulo no Menu do admin
+'menu_name' => __( 'Tags' ), // define o rótulo no Menu do admin
 ),
 'rewrite' => array('slug' => 'tags_portifolio', 'with_front' => true), // define se o post deve ter a sua URL
 )
 );
 
-// PASSO 6 - SALVANDO O POST
+
+// PASSO 5 - SALVANDO O POST
 
 add_action('save_post', 'save_details_portifolio');
 function save_details_portifolio(){
