@@ -72,7 +72,7 @@ function portifolio_campos() {
  <?php
 }
 
-PASSO 4 - CRIANDO CATEGORIAS
+//PASSO 4 - CRIANDO CATEGORIAS
 
 register_taxonomy(
 "categorias_portifolio", //nome da taxonomia
@@ -85,7 +85,7 @@ array(
 )
 );
 
-PASSO 5 - CRIANDO TAGS
+//PASSO 5 - CRIANDO TAGS
 
 register_taxonomy
 (
