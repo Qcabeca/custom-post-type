@@ -39,6 +39,8 @@ get_header(); //CHAMA O HEADER/CABEÇALHO ?>
 
 <div class="site-content" id="primary">
 <div id="content" role="main">
+<!-- CHAMA A BUSCA PARA POST TYPE ESPECÍFICO -->
+<?php include (TEMPLATEPATH . '/searchform-portifolio.php'); ?>
 <h2>Galeria do Portifólio</h2>
 <!-- AQUI VAI O CONTEÚDO DO LOOP PARA POST TYPE ESPECÍFICO -->
 <!-- VERIFICA SE TEM CUSTOM POST TYPE PORTIFOLIO -->
